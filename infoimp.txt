@@ -1,0 +1,14 @@
+In this document, we have listed all the links what we share. 
+So in future if we need to remember we can easily use them.
+
+Database Related:
+>> http://creately.com/diagram-type/database-design
+
+PHP Related:
+>>
+
+Front End Related:
+>> 
+
+Others:
+>>
