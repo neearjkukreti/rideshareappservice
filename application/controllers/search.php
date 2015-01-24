@@ -19,7 +19,8 @@ class Search extends CI_Controller {
             //$destinationCity = $this->input->post('destinationCity');
             $sourceCity = "Delhi";
             $destinationCity = "Dehradun City";
-            
+            $date = "24/01/2015";
+                       
             $responseData = array(
                                   "basic" =>  array("SourceCity" => $sourceCity,
                                                     "DestinationCity" => $destinationCity,

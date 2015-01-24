@@ -12,3 +12,16 @@ Front End Related:
 
 Others:
 >>
+
+/*
+first_name: "Anubhav"
+ * gender: "male"
+ * id: "1051266228233974"
+ * last_name: "Bhat"
+ * link: "https://www.facebook.com/app_scoped_user_id/1051266228233974/"
+ * locale: "en_US"
+ * name: "Anubhav Bhat"
+ * timezone: 5.5
+ * updated_time: "2015-01-15T19:53:49+0000"
+ * verified: true
+ */
