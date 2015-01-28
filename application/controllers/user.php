@@ -8,6 +8,7 @@ class User extends CI_Controller {
     const STATUS_USER_UPDATED       = 'USER_UPDATED';
     
     const ERROR_CREATING_USER       = 'Error in creating user';
+    const ERROR_FACEBOOK_USER       = 'Error in getting facebook id';
     /**
 	 * Search Page for this controller.
 	 *
@@ -23,26 +24,35 @@ class User extends CI_Controller {
         public function index()
         {
             $post = $this->input->post();
-            $userDirty = $post;
-            $userdata = $this->cleanUser($userDirty);
+                        
+            if (!isset($HTTP_RAW_POST_DATA)){
+                $HTTP_RAW_POST_DATA = file_get_contents("php://input");
+            }
             
+            $userDirty = json_decode($HTTP_RAW_POST_DATA, true); 
+            $userDirty = $post;
+            
+            $userdata = $this->cleanUser($userDirty);
             $responseData = array();
+            if(!isset( $userdata['fb_id']) ){
+                $responseData['desc'] = self::ERROR_FACEBOOK_USER;
+                echo json_encode($responseData);
+                return;
+            }            
             $userid = 0;
-            if( $userid = $this->user_model->isUserExists( $userdata['fb_id'], User_model::FIELD_FACEBOOK_ID ) ){
-                // Old User Updation and Verification here
-                if( isset( $userDirty['needsUpdate']) ){
+            if( $this->user_model->isUserExists( $userdata['fb_id'], User_model::FIELD_FACEBOOK_ID ) ){// Old User Updation and Verification here
+                $userid = $this->user_model->getIDFromFacebookID( $userdata['fb_id']);
+                $responseData['status'] = self::STATUS_USER_VERIFIED;                
+                if( isset( $userDirty['fb_id']) ){
                     $this->user_model->update($userid, $userdata);
                     $responseData['status'] = self::STATUS_USER_UPDATED;
-                }else{
-                    $responseData['status'] = self::STATUS_USER_VERIFIED;
                 }
-            }else{
-                // New User Creation Here
-               $userid = $this->create($userdata); 
+            }else{ // New User Creation Here
+               $userid = $this->create($userdata);
+               $responseData['desc'] = self::ERROR_CREATING_USER;
                if($userid){
                    $responseData['status'] = self::STATUS_USER_CREATED;
-               }else{
-                   $responseData['desc'] = self::ERROR_CREATING_USER;
+                   $responseData['desc'] = "";
                }
             }
             if($userid){
@@ -57,28 +67,52 @@ class User extends CI_Controller {
             return $userid;
         }
         
-        private function cleanUser($dirtyData){
+        private function update($userdata){
+            $this->user_model->update($userdata);             
+        }
+        
+        private function cleanUser($dirtyData){                        
+            if(isset($dirtyData['fb_id']) ){
+                return $this->cleanUserForUpdation($dirtyData); 
+            }else{
+                return $this->cleanUserForInsertion($dirtyData);
+            }
+        }
+        
+        private function cleanUserForUpdation($dirtyData){
             $user = array();
-            if(isset($dirtyData['id'])){
-                $user['fb_id'] = $dirtyData['id'];
+            $userUpdateArray = array('id','firstname', 'lastname', 'gender', 'fb_id', 'email_id', 'mobile','dob',
+                                     'lang_known','chat','music','smoking','food','pet');
+            foreach($userUpdateArray as $key){
+                if( isset($dirtyData[$key]) ){
+                    $user[$key] =  $dirtyData[$key];
+                }elseif(in_array($key, array('chat','music','smoking','food','pet'))){
+                    $user[$key] = 0;
+                }
             }
-            if(isset($dirtyData['first_name'])){
-                $user['firstname'] = $dirtyData['first_name'];
-            }
-            if(isset($dirtyData['last_name'])){
-                $user['lastname'] = $dirtyData['last_name'];
-            }
-            if(isset($dirtyData['gender'])){
-                $user['gender'] = $dirtyData['gender'];
-            }
-            if(isset($dirtyData['mobile'])){
-                $user['mobile'] = $dirtyData['mobile'];
-            }
-            if(isset($dirtyData['dob'])){
-               $user['dob'] = date( "Y-m-d", strtotime($dirtyData['dob']) );
-            }
-            if(isset($dirtyData['email_id'])){
-               $user['email_id'] = $dirtyData['dob'];
+            return $user;
+        }
+        
+        private function cleanUserForInsertion($dirtyData){
+            //$userVerified = array('fb_id','firstname', 'lastname', 'gender', 'email_id', 'mobile','dob');
+            $user = array();
+            $facebookUser = array('id','first_name','last_name','gender','mobile','dob','email_id');
+            foreach( $facebookUser as $key){
+                if( isset( $dirtyData[$key] ) ){
+                    if( !in_array($key, array('id','first_name','last_name') ) ){
+                        if($key == 'dob'){
+                            $user['dob'] = date( "Y-m-d", strtotime($dirtyData['dob']) );
+                        }else{
+                            $user[$key] = $dirtyData[$key];
+                        }                            
+                    }elseif($key == 'id') {
+                        $user['fb_id'] = $dirtyData[$key];
+                    }elseif($key == 'first_name'){
+                        $user['firstname'] = $dirtyData[$key];
+                    }elseif($key == 'last_name'){
+                        $user['lastname'] = $dirtyData[$key];
+                    }
+                }
             }
             return $user;
         }
