@@ -63,7 +63,8 @@ class User_model extends CI_Model {
                     $userdata['pet']        = $preferences['pet'];
                 }
             }
-            return json_encode($userdata);
+            //return json_encode($userdata);
+            return $userdata;
         }
         return false;
     }
