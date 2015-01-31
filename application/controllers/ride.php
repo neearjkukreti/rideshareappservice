@@ -58,4 +58,28 @@ class Ride extends CI_Controller {
         return $ride;
     }
 
+
+
+    public function show($uid) {
+
+        $post = $this->input->post();
+
+        if (!isset($HTTP_RAW_POST_DATA)){
+            $HTTP_RAW_POST_DATA = file_get_contents("php://input");
+        }
+            
+        $post = json_decode($HTTP_RAW_POST_DATA, true); 
+        $type = $post['type'];
+        $response = array();
+        $output = $this->ride_model->read($uid, $type);
+        if(!$output){
+            $response['status'] = 'fail';
+        }else{
+            $response['status'] = 'success';
+            $response['rides'] = $output;
+        }
+        echo json_encode($response);
+
+    }
+
 }
