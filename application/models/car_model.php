@@ -28,7 +28,14 @@ class Car_model extends CI_Model {
             return false;
         }
         $query = $this->db->get(self::TABLE_CAR);
-        $query->result();
+        if ($query->num_rows()) {
+            $cardata = array();
+            foreach ($query->result_array() as $row) {
+                $cardata[] = $row;
+            }
+            return $cardata;
+        }
+        return false;        
     }
 
     public function update($id, $cardata) {

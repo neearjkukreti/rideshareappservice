@@ -124,8 +124,7 @@ class User_model extends CI_Model {
         return true;
     }
 
-    public function delete() {
-        
+    public function delete() {        
     }
 
     public function isUserExists($id, $fieldname) {
