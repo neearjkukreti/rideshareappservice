@@ -15,9 +15,12 @@ class Ride_model extends CI_Model {
     public function create($ridedata){
         $this->db->insert( self::TABLE_RIDE, $ridedata );
     }
-    public function read(){
-        
+    public function read($rideDetails){
+        if( isset($rideDetails['host_id']) && $rideDetails['host_id']!=0 ){
+            $this->db->query();
+        }
     }
+    
     public function update() {
         
     }
