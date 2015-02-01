@@ -111,7 +111,7 @@ class User_model extends CI_Model {
             $this->db->update(self::TABLE_USER_DETAILS, $userDetailsToBeUpdated);
         }
         
-        // car details update
+        /* car details update
         if(isset( $userdata['cars']) ){
             foreach($userdata['cars'] as $key => $cardata){
                 if( isset( $cardata['id']) ){
@@ -120,7 +120,7 @@ class User_model extends CI_Model {
                     $this->car_model->create( $cardata );
                 }
             }
-        }
+        }*/
         return true;
     }
 
