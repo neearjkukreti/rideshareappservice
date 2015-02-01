@@ -73,8 +73,7 @@ class User_model extends CI_Model {
             if ($queryThree->num_rows()) {
                 $carCount = 1;
                 foreach ($queryThree->result_array() as $car) {
-                    $userdata['cars'][$carCount] = $car;
-                    $carCount++;
+                    $userdata['cars'][] = $car;                    
                 }
             }
             
