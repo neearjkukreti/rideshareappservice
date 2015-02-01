@@ -11,17 +11,30 @@ class Search extends CI_Controller {
 	 * 		http://rideashare.com/index.php/search/index
 	 *
 	 */
+
+    public function __construct() {
+        parent::__construct();
+        $this->load->model('ride_model');
+    }
+
+
+
 	public function index()
 	{
             
             //$rideDate =  $this->input->post('rideDate');
 	    //$sourceCity = $this->input->post('sourceCity');
             //$destinationCity = $this->input->post('destinationCity');
-            $sourceCity = "Delhi";
-            $destinationCity = "Dehradun City";
-            $date = "24/01/2015";
-                       
-            $responseData = array(
+            $rfrom = "Dehradun";
+            $rto = "Delhi";
+            //$rdate = date("Y-m-d",strtotime("24/01/2015"));
+            $rdate = '2015-01-24';
+            $rtime="12:00:00";
+            $searchdata = $this->ride_model->search($rfrom ,$rto ,$rdate ,$rtime );
+
+            $responseData['searchdata']=$searchdata;
+
+        /*    $responseData = array(
                                   "basic" =>  array("SourceCity" => $sourceCity,
                                                     "DestinationCity" => $destinationCity,
                                                     "Distance"  => "255.90",
@@ -77,6 +90,9 @@ class Search extends CI_Controller {
                                                                     ),
                                                     )
                             );
+          */
+
+
             echo json_encode($responseData);
 	}	
 }

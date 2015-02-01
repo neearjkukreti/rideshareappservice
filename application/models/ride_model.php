@@ -8,7 +8,7 @@
 class Ride_model extends CI_Model {
    const TABLE_RIDE = 'ride';
    const TABLE_RIDE_BOOKING = 'ride_booking';
-
+   const TABLE_USER = 'user';
     public function __construct(){
 	$this->load->database();
     }
@@ -48,4 +48,27 @@ class Ride_model extends CI_Model {
     public function delete(){
         
     } 
+
+    public function search($rfrom,$rto,$rdate,$rtime,$extra_field="")
+    {
+
+
+            $sql  = sprintf("SELECT * FROM %s r , user u WHERE r.rfrom = '%s' and r.rto='%s' and r.rdate='%s' and r.rtime='%s' and r.available_seats !=0 and r.host=u.id " 
+                                    ,self::TABLE_RIDE, $rfrom, $rto, $rdate, $rtime) ;
+            $query = $this->db->query($sql);
+        
+
+        if( $query->num_rows() ){
+            $ridedata = array();
+            foreach ($query->result_array() as $row){
+                $ridedata[]= $row;            
+            }
+        }else{
+            return false;
+        } 
+        return $ridedata;       
+
+    }
+
+
 }
