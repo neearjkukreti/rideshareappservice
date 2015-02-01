@@ -24,43 +24,35 @@ class Car extends CI_Controller {
         $carDirty = $post;
         $cardata = $this->cleanCar($carDirty);
         $this->car_model->create($cardata);
-        $this->car_model->read();
     }
 
     private function cleanCar($dirtyData) {
-        $car = array();
-        if (isset($dirtyData['plate_no'])) {
-            $car['plate_no'] = $dirtyData['plate_no'];
-        }
-        if (isset($dirtyData['model'])) {
-            $car['model'] = $dirtyData['model'];
-        }
-        if (isset($dirtyData['name'])) {
-            $car['name'] = $dirtyData['name'];
-        }
-        if (isset($dirtyData['grade'])) {
-            $car['grade'] = $dirtyData['grade'];
-        }
-        if (isset($dirtyData['sterio'])) {
-            $car['sterio'] = $dirtyData['sterio'];
-        }
-        if (isset($dirtyData['rating'])) {
-            $car['rating'] = $dirtyData['rating'];
-        }
-        if (isset($dirtyData['leather_seat'])) {
-            $car['leather_seat'] = $dirtyData['leather_seat'];
-        }
-
-        if (isset($dirtyData['extra_info'])) {
-            $car['extra_info'] = $dirtyData['extra_info'];
-        }
-        if (isset($dirtyData['user_id'])) {
-            $car['user_id'] = $dirtyData['user_id'];
-        }
-        return $car;
+        return $dirtyData;
     }
-    public function show(){
-        $this->car_model->read();   
+    
+    public function update() {
+        $post = $this->input->post();
+        $carDirty = $post;
+        $cardata = $this->cleanCar($carDirty);
+        $this->car_model->update($cardata['id'], $cardata);
     }
 
+    public function getDetails() {
+        //$post = $this->input->post();
+        
+        if (!isset($HTTP_RAW_POST_DATA)){
+            $HTTP_RAW_POST_DATA = file_get_contents("php://input");
+        }
+        $carDirty = json_decode($HTTP_RAW_POST_DATA, true);
+        
+        $id = $carDirty['id'];
+        $fieldName = $carDirty['type'];
+        $output = $this->car_model->read($id, $fieldName);
+        if($output){
+            $responseData['details'] = $output;
+        }else{
+            $responseData['status'] = 'fail';
+        }        
+        echo json_encode($responseData);
+    }
 }
