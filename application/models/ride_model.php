@@ -7,11 +7,13 @@
  */
 
 class Ride_model extends CI_Model {
-   const TABLE_RIDE = 'ride';
-   const TABLE_RIDE_BOOKING = 'ride_booking';
-   const TABLE_USER = 'user';
-    public function __construct(){
-	$this->load->database();
+
+    const TABLE_RIDE = 'ride';
+    const TABLE_RIDE_BOOKING = 'ride_booking';
+    const TABLE_USER = 'user';
+
+    public function __construct() {
+        $this->load->database();
     }
 
     public function create($ridedata) {
@@ -46,27 +48,43 @@ class Ride_model extends CI_Model {
 
     public function delete() {
         
-    } 
+    }
 
-    public function search($rfrom,$rto,$rdate,$rtime,$extra_field="")
-    {
+    public function search($rfrom = NULL, $rto = NULL, $rdate = NULL, $rtime = NULL, $extra_field = "") {
 
+        $WHERE = " r.available_seats !=0 and r.host=u.id ";
+        if ($rfrom != NULL){
+            $WHERE .= sprintf(" AND r.rfrom = '%s' ", $rfrom);
+        }
 
-            $sql  = sprintf("SELECT * FROM %s r , user u WHERE r.rfrom = '%s' and r.rto='%s' and r.rdate='%s' and r.rtime='%s' and r.available_seats !=0 and r.host=u.id " 
-                                    ,self::TABLE_RIDE, $rfrom, $rto, $rdate, $rtime) ;
-            $query = $this->db->query($sql);
+        if($rto != NULL){
+            $WHERE .= sprintf(" AND r.rto='%s'", $rto);   
+        }
+
+        if($rdate != NULL ) {
+            $WHERE .= sprintf(" AND r.rdate='%s' ", $rdate);         
+        }
+
+        if($rdate != NULL && $rtime != NULL) {
+            $WHERE .= sprintf(" AND r.rtime='%s' ", $rtime);         
+        }
+
+        $sql = sprintf("SELECT r.*, u.id as user_id, u.firstname, u.lastname, u.gender, u.email_id, u.mobile, u.dob 
+                              FROM %s r , %s u 
+                              WHERE %s ", 
+                            self::TABLE_RIDE, self::TABLE_USER, $WHERE );
         
 
-        if( $query->num_rows() ){
+        $query = $this->db->query($sql);
+        if ($query->num_rows()) {
             $ridedata = array();
-            foreach ($query->result_array() as $row){
-                $ridedata[]= $row;            
+            foreach ($query->result_array() as $row) {
+                $ridedata[] = $row;
             }
-        }else{
+        } else {
             return false;
-        } 
-        return $ridedata;       
-
+        }
+        return $ridedata;
     }
 
 }

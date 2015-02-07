@@ -30,10 +30,23 @@ class Search extends CI_Controller {
         $searchDirty = json_decode($HTTP_RAW_POST_DATA, true); 
         //$searchDirty = $post;
 
-        $rfrom = $searchDirty['rfrom'];
-        $rto   = $searchDirty['rto'];
-        $rdate = $searchDirty['rdate'];
-        $rtime = $searchDirty['rtime'];
+        $rfrom  = NULL;
+        $rto    = NULL;
+        $rdate  = NULL;
+        $rtime  = NULL;
+
+        if(isset($searchDirty['rfrom'])){
+            $rfrom = $searchDirty['rfrom'];    
+        }
+        if(isset($searchDirty['rto'])){
+            $rto   = $searchDirty['rto'];
+        }
+        if(isset($searchDirty['rdate'])){
+            $rdate   = $searchDirty['rdate'];
+        }
+        if(isset($searchDirty['rtime'])){
+            $rtime   = $searchDirty['rtime'];
+        }
         //$searchOrder = $searchDirty[''];
 
         $searchdata = $this->ride_model->search($rfrom ,$rto ,$rdate ,$rtime );
