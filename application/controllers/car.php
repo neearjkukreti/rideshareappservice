@@ -92,7 +92,7 @@ class Car extends CI_Controller {
         }
         
         $carData = $this->cleanCar($carDirty);
-        $this->car_model->update($carData['id'], $cardata);
+        $this->car_model->update($carData['id'], $carData);
         
         $userCarDetails = $this->car_model->read( $carData['user_id'], 'user_id' );
         if( $userCarDetails ){
