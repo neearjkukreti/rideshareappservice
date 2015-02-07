@@ -102,6 +102,24 @@ class Car extends CI_Controller {
         echo json_encode($response);
     }
 
+    public function delete() {        
+        if (!isset($HTTP_RAW_POST_DATA)){
+            $HTTP_RAW_POST_DATA = file_get_contents("php://input");
+        }
+        $carDirty = json_decode($HTTP_RAW_POST_DATA, true);
+        if( !isset( $carDirty['id'] ) ){
+            $response['error'] = 'Missing car data';
+            echo json_encode($response);
+            return;
+        }
+        
+        $carData = $this->cleanCar($carDirty);
+        $this->car_model->delete($carData['id']);
+        
+        $response['status'] = 'DELETED';
+        echo json_encode($response);
+    }
+
     public function getDetails() {
         //$post = $this->input->post();
         
