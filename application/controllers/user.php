@@ -30,7 +30,7 @@ class User extends CI_Controller {
             }
             
             $userDirty = json_decode($HTTP_RAW_POST_DATA, true); 
-            $userDirty = $post;
+            //$userDirty = $post;
             
             $userdata = $this->cleanUser($userDirty);
             $responseData = array();
