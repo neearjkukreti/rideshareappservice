@@ -21,7 +21,6 @@ class Search extends CI_Controller {
 
 	public function index()
 	{
-            
         $post = $this->input->post();
                     
         if (!isset($HTTP_RAW_POST_DATA)){
