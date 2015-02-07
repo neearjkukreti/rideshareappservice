@@ -77,6 +77,9 @@ class Car extends CI_Controller {
         if(isset($dirtyData['extra_info'])){
             $cleanData['extra_info']            = $dirtyData['extra_info'];
         }
+        if(isset($dirtyData['ac'])){
+            $cleanData['ac']            = $dirtyData['ac'];
+        }
         return $cleanData;
     }
     
