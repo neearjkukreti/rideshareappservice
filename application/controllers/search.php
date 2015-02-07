@@ -22,11 +22,11 @@ class Search extends CI_Controller {
 	public function index()
 	{
             
-            //$rideDate =  $this->input->post('rideDate');
-	    //$sourceCity = $this->input->post('sourceCity');
+        $rideDate =  $this->input->post('rideDate');
+	    $sourceCity = $this->input->post('sourceCity');
             //$destinationCity = $this->input->post('destinationCity');
-            $rfrom = "Dehradun";
-            $rto = "Delhi";
+           // $rfrom = "Dehradun";
+            // $rto = "Delhi";
             //$rdate = date("Y-m-d",strtotime("24/01/2015"));
             $rdate = '2015-01-24';
             $rtime="12:00:00";
