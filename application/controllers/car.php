@@ -123,6 +123,13 @@ class Car extends CI_Controller {
         $this->car_model->delete($carData['id']);
         
         $response['status'] = 'DELETED';
+
+        if( isset( $carData['user_id'] ) ){
+            $userCarDetails = $this->car_model->read( $carData['user_id'], 'user_id' );
+            if( $userCarDetails ){
+                $response['cars']   = $userCarDetails;
+            }
+        }
         echo json_encode($response);
     }
 
