@@ -62,8 +62,8 @@ class Car extends CI_Controller {
         if(isset($dirtyData['grade'])){
             $cleanData['grade']             = $dirtyData['grade'];
         }
-        if(isset($dirtyData['stereo'])){
-            $cleanData['stereo']            = $dirtyData['stereo'];
+        if(isset($dirtyData['sterio'])){
+            $cleanData['sterio']            = $dirtyData['sterio'];
         }
         if(isset($dirtyData['leather_seat'])){
             $cleanData['leather_seat']      = $dirtyData['leather_seat'];
@@ -134,12 +134,13 @@ class Car extends CI_Controller {
     }
 
     public function getDetails() {
-        //$post = $this->input->post();
+        $post = $this->input->post();
         
         if (!isset($HTTP_RAW_POST_DATA)){
             $HTTP_RAW_POST_DATA = file_get_contents("php://input");
         }
         $carDirty = json_decode($HTTP_RAW_POST_DATA, true);
+       //$carDirty = $post;
         
         $id = $carDirty['id'];
         $fieldName = $carDirty['type'];

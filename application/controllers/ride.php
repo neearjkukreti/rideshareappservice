@@ -21,9 +21,21 @@ class Ride extends CI_Controller {
 
     public function create() {
         $post = $this->input->post();
-        $rideDirty = $post;
+        if (!isset($HTTP_RAW_POST_DATA)){
+            $HTTP_RAW_POST_DATA = file_get_contents("php://input");
+        }
+        $rideDirty = json_decode($HTTP_RAW_POST_DATA, true);
+        if(!$rideDirty){
+          $rideDirty = $post;  
+        }
+        $response = array();
+
         $ridedata = $this->cleanRide($rideDirty);
+
         $this->ride_model->create($ridedata);
+        
+        $response['status'] = 'CREATED';
+        echo json_encode($response);
     }
 
     private function cleanRide($dirtyData) {
@@ -46,14 +58,20 @@ class Ride extends CI_Controller {
         if (isset($dirtyData['rto'])) {
             $ride['rto'] = $dirtyData['rto'];
         }
-        if (isset($dirtyData['seat'])) {
+        if (isset($dirtyData['seats'])) {
             $ride['seats'] = $dirtyData['seats'];
         }
-        if (isset($dirtyData['rlate'])) {
+        if (isset($dirtyData['available_seats'])) {
+            $ride['available_seats'] = $dirtyData['available_seats'];
+        }
+        if (isset($dirtyData['rlat'])) {
             $ride['rlat'] = $dirtyData['rlat'];
         }
         if (isset($dirtyData['rlong'])) {
             $ride['rlong'] = $dirtyData['rlong'];
+        }
+        if (isset($dirtyData['status'])) {
+            $ride['status'] = $dirtyData['status'];
         }
         return $ride;
     }
