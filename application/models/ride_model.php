@@ -51,7 +51,7 @@ class Ride_model extends CI_Model {
     public function readUserRides($userid, $type) {
         if ($type == 'offer') {
             // show car hosted by user
-            $sql = sprintf("SELECT * FROM %s r, %s rb WHERE r.id = rb.ride_id AND r.host = %d ", self::TABLE_RIDE, self::TABLE_RIDE_BOOKING, $userid);
+            $sql = sprintf("SELECT * FROM %s r WHERE host = %d ", self::TABLE_RIDE, $userid);
         } elseif ($type == 'apply') {
             $sql = sprintf("SELECT * FROM %s r, %s rb WHERE r.id = rb.ride_id AND rb.user_id = %d ", self::TABLE_RIDE, self::TABLE_RIDE_BOOKING, $userid);
         } else {

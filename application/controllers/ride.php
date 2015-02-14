@@ -86,16 +86,8 @@ class Ride extends CI_Controller {
      * This function is used to show the rides of user based on its type as 'offer' or 'apply'
      * @param type $userid
      */
-    public function show($userid) {
-
-        $post = $this->input->post();
-
-        if (!isset($HTTP_RAW_POST_DATA)) {
-            $HTTP_RAW_POST_DATA = file_get_contents("php://input");
-        }
-
-        $post = json_decode($HTTP_RAW_POST_DATA, true);
-        $type = $post['type'];
+    public function show($userid, $type) {
+       
         $response = array();
         $output = $this->ride_model->readUserRides($userid, $type);
         if (!$output) {
