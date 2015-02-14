@@ -26,7 +26,7 @@ class Ride_model extends CI_Model {
      * @return boolean
      */
     public function read($id) {
-        $sql = sprintf("SELECT * FROM %s r"
+        $sql = sprintf("SELECT * FROM %s r "
                         . "WHERE r.id = %d ", 
                         self::TABLE_RIDE, $id);
         
