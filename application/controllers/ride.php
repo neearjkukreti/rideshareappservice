@@ -114,5 +114,24 @@ class Ride extends CI_Controller {
         }
         echo json_encode($response);
     }
-
+    
+    public function apply(){
+        $post = $this->input->post();
+        if (!isset($HTTP_RAW_POST_DATA)){
+            $HTTP_RAW_POST_DATA = file_get_contents("php://input");
+        }
+        $rideDirty = json_decode($HTTP_RAW_POST_DATA, true);
+        if(!$rideDirty){
+          $rideDirty = $post;  
+        }
+        $ride_id = $rideDirty['rideid'];
+        $user_id = $rideDirty['userid'];
+        
+        $response = array();
+        
+        $this->ride_model->apply($ride_id, $user_id);
+        
+        $response['status'] = 'APPLIED';
+        echo json_encode($response);
+    }
 }

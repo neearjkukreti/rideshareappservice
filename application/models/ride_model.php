@@ -51,7 +51,7 @@ class Ride_model extends CI_Model {
     public function readUserRides($userid, $type) {
         if ($type == 'offer') {
             // show car hosted by user
-            $sql = sprintf("SELECT * FROM %s r WHERE host = %d ", self::TABLE_RIDE, $userid);
+            $sql = sprintf("SELECT * FROM %s r WHERE host = %d ", self::TABLE_RIDE, $userid);            
         } elseif ($type == 'apply') {
             $sql = sprintf("SELECT * FROM %s r, %s rb WHERE r.id = rb.ride_id AND rb.user_id = %d ", self::TABLE_RIDE, self::TABLE_RIDE_BOOKING, $userid);
         } else {
@@ -62,6 +62,9 @@ class Ride_model extends CI_Model {
         if ($query->num_rows()) {
             $ridedata = array();
             foreach ($query->result_array() as $row) {
+                if($type == 'offer'){
+                    $row['bookingDetails'] = $this->readBookingDetails( $row['id'] );
+                }
                 $ridedata[] = $row;
             }
         } else {
@@ -69,7 +72,21 @@ class Ride_model extends CI_Model {
         }
         return $ridedata;
     }
-
+    
+    private function readBookingDetails( $rideid ) {
+        $sqlbookingDetails = sprintf("SELECT u.* FROM %s rb, users u "
+                                   . "WHERE rb.ride_id = %d AND u.id=rb.user_id", 
+                                    self::TABLE_RIDE_BOOKING, $rideid);
+        $queryBooking = $this->db->query($sqlbookingDetails);
+        $bookingDetails = array();
+        if ($queryBooking->num_rows()) {
+            foreach ($queryBooking->result_array() as $row) {
+                $bookingDetails[] = $row;
+            }
+        }
+        return $bookingDetails;
+    }
+    
     public function update() {
         
     }
@@ -122,6 +139,19 @@ class Ride_model extends CI_Model {
             return false;
         }
         return $ridedata;
+    }
+    public function apply($ride_id, $user_id){
+        $bookingData = array(
+                            'ride_id' => $ride_id, 
+                            'user_id' => $user_id,
+                            'booking_status' => 2 
+                            // booking status 
+                            // 0: Canceled by Host, 
+                            // 1: Confirmed by Host,
+                            // 2: Confirmed by Applied User,
+                            // 3: Canceled by Applied User
+                            );
+        $this->db->insert(self::TABLE_RIDE_BOOKING, $bookingData);
     }
 
 }
