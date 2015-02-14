@@ -74,9 +74,9 @@ class Ride_model extends CI_Model {
     }
     
     private function readBookingDetails( $rideid ) {
-        $sqlbookingDetails = sprintf("SELECT u.* FROM %s rb, users u "
+        $sqlbookingDetails = sprintf("SELECT u.* FROM %s rb, %s u "
                                    . "WHERE rb.ride_id = %d AND u.id=rb.user_id", 
-                                    self::TABLE_RIDE_BOOKING, $rideid);
+                                    self::TABLE_RIDE_BOOKING, self::TABLE_USER, $rideid);
         $queryBooking = $this->db->query($sqlbookingDetails);
         $bookingDetails = array();
         if ($queryBooking->num_rows()) {
