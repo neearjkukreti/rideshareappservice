@@ -26,9 +26,10 @@ class Ride_model extends CI_Model {
      * @return boolean
      */
     public function read($id) {
-        $sql = sprintf("SELECT * FROM %s r, %s rb "
-                        . "WHERE r.id = rb.ride_id AND r.id = %d ", 
-                        self::TABLE_RIDE, self::TABLE_RIDE_BOOKING, $id);
+        $sql = sprintf("SELECT * FROM %s r"
+                        . "WHERE r.id = %d ", 
+                        self::TABLE_RIDE, $id);
+        
         $query = $this->db->query($sql);
         if ($query->num_rows()) {
             $ridedata = array();
