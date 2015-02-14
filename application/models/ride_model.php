@@ -19,13 +19,40 @@ class Ride_model extends CI_Model {
     public function create($ridedata) {
         $this->db->insert(self::TABLE_RIDE, $ridedata);
     }
-
-    public function read($uid, $type) {
+    
+    /**
+     * This model function is used to retrieve the ride data based on the given ride id 
+     * @param type $id
+     * @return boolean
+     */
+    public function read($id) {
+        $sql = sprintf("SELECT * FROM %s r, %s rb "
+                        . "WHERE r.id = rb.ride_id AND r.id = %d ", 
+                        self::TABLE_RIDE, self::TABLE_RIDE_BOOKING, $id);
+        $query = $this->db->query($sql);
+        if ($query->num_rows()) {
+            $ridedata = array();
+            foreach ($query->result_array() as $row) {
+                $ridedata = $row;
+            }
+        } else {
+            return false;
+        }
+        return $ridedata;
+    }
+    
+    /**
+     * This model function is used to retrieve the ride data of the user based on its type i.e offer/apply
+     * @param type $userid
+     * @param type $type
+     * @return boolean
+     */
+    public function readUserRides($userid, $type) {
         if ($type == 'offer') {
             // show car hosted by user
-            $sql = sprintf("SELECT * FROM %s r, %s rb WHERE r.id = rb.ride_id AND r.host = %d ", self::TABLE_RIDE, self::TABLE_RIDE_BOOKING, $uid);
+            $sql = sprintf("SELECT * FROM %s r, %s rb WHERE r.id = rb.ride_id AND r.host = %d ", self::TABLE_RIDE, self::TABLE_RIDE_BOOKING, $userid);
         } elseif ($type == 'apply') {
-            $sql = sprintf("SELECT * FROM %s r, %s rb WHERE r.id = rb.ride_id AND rb.user_id = %d ", self::TABLE_RIDE, self::TABLE_RIDE_BOOKING, $uid);
+            $sql = sprintf("SELECT * FROM %s r, %s rb WHERE r.id = rb.ride_id AND rb.user_id = %d ", self::TABLE_RIDE, self::TABLE_RIDE_BOOKING, $userid);
         } else {
             return false;
         }
@@ -49,7 +76,16 @@ class Ride_model extends CI_Model {
     public function delete() {
         
     }
-
+    /**
+     * This model function is used for searching the rides on the basis of the given parameters
+     * Also if you gave null params then it returns all the available rides.
+     * @param type $rfrom
+     * @param type $rto
+     * @param type $rdate
+     * @param type $rtime
+     * @param type $extra_field
+     * @return boolean
+     */
     public function search($rfrom = NULL, $rto = NULL, $rdate = NULL, $rtime = NULL, $extra_field = "") {
 
         $WHERE = " r.available_seats !=0 and r.host=u.id ";

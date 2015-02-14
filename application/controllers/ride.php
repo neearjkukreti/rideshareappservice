@@ -18,7 +18,9 @@ class Ride extends CI_Controller {
         parent::__construct();
         $this->load->model('ride_model');
     }
-
+    /**
+     * This function is used to create the ride based on the given ride data via post 
+     */
     public function create() {
         $post = $this->input->post();
         if (!isset($HTTP_RAW_POST_DATA)){
@@ -37,7 +39,11 @@ class Ride extends CI_Controller {
         $response['status'] = 'CREATED';
         echo json_encode($response);
     }
-
+    /**
+     * This function is used to clean the dirty ride data to store the exactly same data as in ride_model
+     * @param type $dirtyData
+     * @return type
+     */
     private function cleanRide($dirtyData) {
         $ride = array();
         if (isset($dirtyData['rdate'])) {
@@ -75,8 +81,12 @@ class Ride extends CI_Controller {
         }
         return $ride;
     }
-
-    public function show($uid) {
+    
+    /**
+     * This function is used to show the rides of user based on its type as 'offer' or 'apply'
+     * @param type $userid
+     */
+    public function show($userid) {
 
         $post = $this->input->post();
 
@@ -87,12 +97,28 @@ class Ride extends CI_Controller {
         $post = json_decode($HTTP_RAW_POST_DATA, true);
         $type = $post['type'];
         $response = array();
-        $output = $this->ride_model->read($uid, $type);
+        $output = $this->ride_model->readUserRides($userid, $type);
         if (!$output) {
             $response['status'] = 'fail';
         } else {
             $response['status'] = 'success';
             $response['rides'] = $output;
+        }
+        echo json_encode($response);
+    }
+    
+    /**
+     * This function will show the ride details of the given ride id.
+     * @param type $rideid
+     */
+    public function showRide($rideid) {
+        $response = array();
+        $output = $this->ride_model->read($rideid);
+        if (!$output) {
+            $response['status'] = 'fail';
+        } else {
+            $response['status'] = 'success';
+            $response['ride'] = $output;
         }
         echo json_encode($response);
     }
