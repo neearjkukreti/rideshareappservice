@@ -140,6 +140,72 @@ class Ride_model extends CI_Model {
         }
         return $ridedata;
     }
+
+/**
+     * This model function is used for searching the top 3 riders and top 3 ride taker
+ */
+
+    public function topthree(){
+
+
+      //  select u.id, count(u.id) count From ride_booking rb, user u where u.id = user_id group by u.id order by count desc limit 0,3
+
+        $sqltoprider =  sprintf("SELECT u.id,u.firstname,u.lastname,count(u.id) count  FROM %s rb, %s u "
+                                   . "WHERE u.id =user_id group by u.id order by count desc limit 0,3", 
+                                    self::TABLE_RIDE_BOOKING, self::TABLE_USER);
+        $querytoprider = $this->db->query($sqltoprider);
+      
+       if($querytoprider->num_rows()){
+         $topthreerider=array();
+         foreach ($querytoprider->result_array() as $row){
+            $topthreerider[]=$row;
+         }
+     }
+         else{
+               $topthreerider=array();
+         }
+
+
+    //select u.id, count(u.id) count from user u, ride r where u.id = r.host or u.id group by u.id order by count desc limit 0,3
+
+         $sqltopridetaker =  sprintf("SELECT u.id,u.firstname,u.lastname,count(u.id) count  FROM %s u, %s r "
+                                   . "WHERE u.id =r.host or u.id  group by u.id order by count desc limit 0,3", 
+                                    self::TABLE_USER, self::TABLE_RIDE);
+
+         $querytoptaker = $this->db->query($sqltopridetaker);
+      
+       if($querytoptaker->num_rows()){
+         $topthreetaker=array();
+         foreach ($querytoptaker->result_array() as $row){
+            $topthreetaker[]=$row;
+         }
+     }
+         else{
+               return false;
+         }
+
+
+            $total=$topthreerider+$topthreetaker ;
+            $result = count($total);
+
+            if($result=0)
+            {
+              $topthreetaker=array();
+               
+            }
+            else
+            {
+                return $total;
+            }
+            
+
+    }
+
+
+
+
+
+
     public function apply($ride_id, $user_id){
         $bookingData = array(
                             'ride_id' => $ride_id, 

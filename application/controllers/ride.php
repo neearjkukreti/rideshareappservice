@@ -98,6 +98,20 @@ class Ride extends CI_Controller {
         }
         echo json_encode($response);
     }
+
+
+        public function topthreeride() {
+       
+        $response = array();
+        $output = $this->ride_model->topthree();
+        if (!$output) {
+            $response['status'] = 'fail';
+        } else {
+            $response['status'] = 'success';
+            $response['rides'] = $output;
+        }
+        echo json_encode($response);
+    }
     
     /**
      * This function will show the ride details of the given ride id.
