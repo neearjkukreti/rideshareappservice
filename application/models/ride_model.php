@@ -14,6 +14,7 @@ class Ride_model extends CI_Model {
 
     public function __construct() {
         $this->load->database();
+        $this->load->model('carbon_model');
     }
 
     public function create($ridedata) {
@@ -158,6 +159,7 @@ class Ride_model extends CI_Model {
        if($querytoprider->num_rows()){
          $topthreerider=array();
          foreach ($querytoprider->result_array() as $row){
+            $row['carbon'] = $this->carbon_model->get_carbon( $row['count'] );
             $topthreerider[]=$row;
          }
      }
@@ -177,6 +179,7 @@ class Ride_model extends CI_Model {
        if($querytoptaker->num_rows()){
          $topthreetaker=array();
          foreach ($querytoptaker->result_array() as $row){
+            $row['carbon'] = $this->carbon_model->get_carbon( $row['count'] );
             $topthreetaker[]=$row;
          }
      }
