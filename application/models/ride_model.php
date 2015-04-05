@@ -142,71 +142,42 @@ class Ride_model extends CI_Model {
         return $ridedata;
     }
 
-/**
-     * This model function is used for searching the top 3 riders and top 3 ride taker
- */
-
+    /**
+    * This model function is used for searching the top 3 riders and top 3 ride taker
+    */
     public function topthree(){
-
-
-      //  select u.id, count(u.id) count From ride_booking rb, user u where u.id = user_id group by u.id order by count desc limit 0,3
-
+        //  select u.id, count(u.id) count From ride_booking rb, user u where u.id = user_id group by u.id order by count desc limit 0,3
         $sqltoprider =  sprintf("SELECT u.id,u.firstname,u.lastname,count(u.id) count  FROM %s rb, %s u "
                                    . "WHERE u.id =user_id group by u.id order by count desc limit 0,3", 
                                     self::TABLE_RIDE_BOOKING, self::TABLE_USER);
-        $querytoprider = $this->db->query($sqltoprider);
-      
-       if($querytoprider->num_rows()){
-         $topthreerider=array();
-         foreach ($querytoprider->result_array() as $row){
-            $row['carbon'] = $this->carbon_model->get_carbon( $row['count'] );
-            $topthreerider[]=$row;
-         }
-     }
-         else{
-               $topthreerider=array();
-         }
-
-
-    //select u.id, count(u.id) count from user u, ride r where u.id = r.host or u.id group by u.id order by count desc limit 0,3
-
-         $sqltopridetaker =  sprintf("SELECT u.id,u.firstname,u.lastname,count(u.id) count  FROM %s u, %s r "
+        $querytoprider = $this->db->query( $sqltoprider );
+        $topthreerider=array();
+        if($querytoprider->num_rows()){
+            foreach ($querytoprider->result_array() as $row){
+                $row['carbon'] = $this->carbon_model->get_carbon( $row['count'] );
+                $topthreerider[]=$row;
+            }
+        }
+        //select u.id, count(u.id) count from user u, ride r where u.id = r.host or u.id group by u.id order by count desc limit 0,3
+        $sqltopridetaker =  sprintf("SELECT u.id,u.firstname,u.lastname,count(u.id) count  FROM %s u, %s r "
                                    . "WHERE u.id =r.host or u.id  group by u.id order by count desc limit 0,3", 
                                     self::TABLE_USER, self::TABLE_RIDE);
-
-         $querytoptaker = $this->db->query($sqltopridetaker);
-      
-       if($querytoptaker->num_rows()){
-         $topthreetaker=array();
-         foreach ($querytoptaker->result_array() as $row){
-            $row['carbon'] = $this->carbon_model->get_carbon( $row['count'] );
-            $topthreetaker[]=$row;
-         }
-     }
-         else{
-               return false;
-         }
-
-
-            $total=$topthreerider+$topthreetaker ;
-            $result = count($total);
-
-            if($result=0)
-            {
-              $topthreetaker=array();
-               
+        $querytoptaker = $this->db->query( $sqltopridetaker );
+        $topthreetaker=array();
+        if($querytoptaker->num_rows()){            
+            foreach ($querytoptaker->result_array() as $row){
+                $row['carbon'] = $this->carbon_model->get_carbon( $row['count'] );
+                $topthreetaker[]=$row;
             }
-            else
-            {
-                return $total;
-            }
-            
-
+        }
+        $total=$topthreerider+$topthreetaker ;
+        $result = count($total);
+        if($result=0){
+            return $topthreetaker;
+        }else{
+            return $total;
+        }
     }
-
-
-
-
 
 
     public function apply($ride_id, $user_id){
